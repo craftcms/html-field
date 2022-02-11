@@ -110,7 +110,7 @@ abstract class HtmlField extends Field
      */
     public function normalizeValue($value, ElementInterface $element = null)
     {
-        if ($value instanceof HtmlFieldData) {
+        if ($value === null || $value instanceof HtmlFieldData) {
             return $value;
         }
 
