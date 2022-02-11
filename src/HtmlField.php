@@ -17,7 +17,6 @@ use craft\helpers\HtmlPurifier;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
-use craft\htmlfield\events\ModifyPurifierConfigEvent;
 use craft\validators\HandleValidator;
 use HTMLPurifier_Config;
 use yii\db\Schema;
@@ -30,28 +29,6 @@ use yii\db\Schema;
  */
 abstract class HtmlField extends Field
 {
-    /**
-     * @event ModifyPurifierConfigEvent The event that is triggered when creating HTML Purifier config
-     *
-     * Plugins can get notified when HTML Purifier config is being constructed.
-     *
-     * ```php
-     * use craft\htmlfield\ModifyPurifierConfigEvent;
-     * use craft\htmlfield\HtmlField;
-     * use HTMLPurifier_AttrDef_Text;
-     * use yii\base\Event;
-     *
-     * Event::on(
-     *     HtmlField::class,
-     *     HtmlField::EVENT_MODIFY_PURIFIER_CONFIG,
-     *     function(ModifyPurifierConfigEvent $event) {
-     *          // ...
-     *     }
-     * );
-     * ```
-     */
-    const EVENT_MODIFY_PURIFIER_CONFIG = 'modifyPurifierConfig';
-
     /**
      * @var string|null The HTML Purifier config file to use
      */
@@ -405,14 +382,7 @@ abstract class HtmlField extends Field
             $purifierConfig->set($option, $value);
         }
 
-        // Give plugins a chance to modify the HTML Purifier config, or add new ones
-        $event = new ModifyPurifierConfigEvent([
-            'config' => $purifierConfig,
-        ]);
-
-        $this->trigger(self::EVENT_MODIFY_PURIFIER_CONFIG, $event);
-
-        return $event->config;
+        return $purifierConfig;
     }
 
     /**
