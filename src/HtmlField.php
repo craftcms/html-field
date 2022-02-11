@@ -252,7 +252,7 @@ abstract class HtmlField extends Field
 
         // Find any element URLs and swap them with ref tags
         $value = preg_replace_callback(
-            sprintf('/(href=|src=)([\'"])([^\'"\?#]*)(\?[^\'"\?#]+)?(#[^\'"\?#]+)?(?:#|%23)([\w\\\\]+)\:(\d+)(?:@(\d+))?(\:(?:transform\:)?%s)?\2/', HandleValidator::$handlePattern),
+            sprintf('/(href=|src=)([\'"])([^\'"\?#]*)(\?[^\'"\?#]+)?(#[^\'"\?#]+)?(?:#|%%23)([\w\\\\]+)\:(\d+)(?:@(\d+))?(\:(?:transform\:)?%s)?\2/', HandleValidator::$handlePattern),
             function($matches) {
                 [, $attr, $q, $url, $query, $hash, $elementType, $ref, $siteId, $transform] = array_pad($matches, 10, null);
 
