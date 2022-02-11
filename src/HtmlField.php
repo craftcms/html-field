@@ -278,7 +278,7 @@ abstract class HtmlField extends Field
                     }
                 }
 
-                return "$attr$q\{$ref||$url\}$query$hash$q";
+                return sprintf('%s%s%s', "$attr$q{", "$ref||$url", "}$query$hash$q");
             },
             $value
         );
