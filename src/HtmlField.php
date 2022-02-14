@@ -32,32 +32,32 @@ abstract class HtmlField extends Field
     /**
      * @var string|null The HTML Purifier config file to use
      */
-    public $purifierConfig;
+    public ?string $purifierConfig = null;
 
     /**
      * @var bool Whether the HTML should be purified on save
      */
-    public $purifyHtml = true;
+    public bool $purifyHtml = true;
 
     /**
      * @var bool Whether `<font>` tags and disallowed inline styles should be removed on save
      */
-    public $removeInlineStyles = false;
+    public bool $removeInlineStyles = false;
 
     /**
      * @var bool Whether empty tags should be removed on save
      */
-    public $removeEmptyTags = false;
+    public bool $removeEmptyTags = false;
 
     /**
      * @var bool Whether non-breaking spaces should be replaced by regular spaces on save
      */
-    public $removeNbsp = false;
+    public bool $removeNbsp = false;
 
     /**
      * @var string The type of database column the field should have in the content table
      */
-    public $columnType = Schema::TYPE_TEXT;
+    public string $columnType = Schema::TYPE_TEXT;
 
     /**
      * @inheritdoc
@@ -85,7 +85,7 @@ abstract class HtmlField extends Field
     /**
      * @inheritdoc
      */
-    public function normalizeValue($value, ElementInterface $element = null)
+    public function normalizeValue($value, ElementInterface $element = null): ?HtmlFieldData
     {
         if ($value === null || $value instanceof HtmlFieldData) {
             return $value;
@@ -159,7 +159,7 @@ abstract class HtmlField extends Field
     /**
      * @inheritdoc
      */
-    public function serializeValue($value, ElementInterface $element = null)
+    public function serializeValue($value, ElementInterface $element = null): ?string
     {
         /** @var HtmlFieldData|string|null $value */
         if (!$value) {

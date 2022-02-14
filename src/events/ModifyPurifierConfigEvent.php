@@ -21,7 +21,7 @@ class ModifyPurifierConfigEvent extends Event
     /**
      * @var HTMLPurifier_Config|null $config the HTML Purifier config
      */
-    public $config;
+    public ?HTMLPurifier_Config $config;
 }
 
 class_alias(ModifyPurifierConfigEvent::class, \craft\redactor\events\ModifyPurifierConfigEvent::class);

@@ -21,7 +21,7 @@ class HtmlFieldData extends Markup
     /**
      * @var string
      */
-    private $_rawContent;
+    private string $_rawContent;
 
     /**
      * Constructor
