@@ -274,7 +274,7 @@ abstract class HtmlField extends Field
         arsort($sortArray);
 
         $value = preg_replace_callback(
-            '/(href=|src=)([\'"])(http.*)?\2/',
+            '/(href=|src=)([\'"])(http.*?)\2/',
             function($matches) use ($sortArray, $siteUrlsById) {
                 $url = $matches[3] ?? null;
 
