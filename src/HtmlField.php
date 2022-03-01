@@ -62,7 +62,7 @@ abstract class HtmlField extends Field
     /**
      * @inheritdoc
      */
-    public function getContentColumnType(): string
+    public function getContentColumnType(): array|string
     {
         return $this->columnType;
     }
@@ -85,7 +85,7 @@ abstract class HtmlField extends Field
     /**
      * @inheritdoc
      */
-    public function normalizeValue($value, ElementInterface $element = null): ?HtmlFieldData
+    public function normalizeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
     {
         if ($value === null || $value instanceof HtmlFieldData) {
             return $value;
@@ -133,7 +133,7 @@ abstract class HtmlField extends Field
     /**
      * @inheritdoc
      */
-    public function isValueEmpty($value, ElementInterface $element): bool
+    public function isValueEmpty(mixed $value, ElementInterface $element): bool
     {
         /** @var HtmlFieldData|null $value */
         if ($value === null) {
@@ -145,7 +145,7 @@ abstract class HtmlField extends Field
     /**
      * @inheritdoc
      */
-    protected function searchKeywords($value, ElementInterface $element): string
+    protected function searchKeywords(mixed $value, ElementInterface $element): string
     {
         $keywords = parent::searchKeywords($value, $element);
 
@@ -159,7 +159,7 @@ abstract class HtmlField extends Field
     /**
      * @inheritdoc
      */
-    public function serializeValue($value, ElementInterface $element = null): ?string
+    public function serializeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
     {
         /** @var HtmlFieldData|string|null $value */
         if (!$value) {
