@@ -16,11 +16,13 @@
     "docs": "https://github.com/craftcms/html-field/blob/main/README.md",
     "rss": "https://github.com/craftcms/html-field/commits/main.atom"
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "craftcms/cms": "^3.6.0"
   },
   "require-dev": {
-    "phpstan/phpstan": "^0.12.96"
+    "craftcms/phpstan": "dev-main"
   },
   "autoload": {
     "psr-4": {
