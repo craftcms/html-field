@@ -308,7 +308,9 @@ abstract class HtmlField extends Field
 
                         if ($element = Craft::$app->getElements()->getElementByUri($uri, $siteId, true)) {
                             $refHandle = $element::refHandle();
-                            $url = '{' . $refHandle . ':' . $element->id . '@' . $siteId . ':url||' . $url . '}';
+                            if ($refHandle) {
+                                $url = '{' . $refHandle . ':' . $element->id . '@' . $siteId . ':url||' . $url . '}';
+                            }
                             break;
                         }
                     }
