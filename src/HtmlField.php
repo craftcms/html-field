@@ -416,7 +416,7 @@ abstract class HtmlField extends Field
         if (is_dir($path)) {
             $files = FileHelper::findFiles($path, [
                 'only' => ['*.json'],
-                'recursive' => false
+                'recursive' => false,
             ]);
 
             foreach ($files as $file) {
