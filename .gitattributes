@@ -6,6 +6,7 @@
 CHANGELOG.md export-ignore
 codeception.yml export-ignore
 composer.lock export-ignore
+ecs.php export-ignore
 phpstan.neon export-ignore
 README.md export-ignore
 SECURITY.md export-ignore
