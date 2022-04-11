@@ -4,12 +4,12 @@
 .github/ export-ignore
 .gitignore export-ignore
 CHANGELOG.md export-ignore
+README.md export-ignore
+SECURITY.md export-ignore
 codeception.yml export-ignore
 composer.lock export-ignore
 ecs.php export-ignore
 phpstan.neon export-ignore
-README.md export-ignore
-SECURITY.md export-ignore
 stubs/ export-ignore
 tests/ export-ignore
 
