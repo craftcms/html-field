@@ -91,7 +91,9 @@ abstract class HtmlField extends Field
             return $value;
         }
 
-        if (in_array($value, ['<p><br></p>', '<p>&nbsp;</p>'], true)) {
+        $value = trim($value);
+
+        if (in_array($value, ['<p><br></p>', '<p>&nbsp;</p>', '<p></p>', ''], true)) {
             return null;
         }
 
