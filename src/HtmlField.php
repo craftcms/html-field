@@ -11,6 +11,7 @@ namespace craft\htmlfield;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\elements\Asset;
 use craft\helpers\FileHelper;
 use craft\helpers\Html;
 use craft\helpers\HtmlPurifier;
@@ -266,18 +267,30 @@ abstract class HtmlField extends Field
 
         // Get all URLs, sort by longest first.
         $sortArray = [];
-        $siteUrlsById = [];
+        $baseUrl = [];
+        $siteOrVolumeId = [];
+        $isVolume = [];
         foreach (Craft::$app->getSites()->getAllSites(false) as $site) {
             if ($site->hasUrls) {
-                $siteUrlsById[$site->id] = $site->getBaseUrl();
-                $sortArray[$site->id] = strlen($siteUrlsById[$site->id]);
+                $baseUrl[] = $site->getBaseUrl();
+                $sortArray[] = strlen($site->getBaseUrl());
+                $isVolume[] = false;
+                $siteOrVolumeId[] = $site->id;
+            }
+        }
+        foreach (Craft::$app->getVolumes()->getAllVolumes() as $vol) {
+            if ($vol->fs->hasUrls) {
+                $baseUrl[] = $vol->fs->url;
+                $sortArray[] = strlen($vol->fs->url);
+                $isVolume[] = true;
+                $siteOrVolumeId[] = $vol->id;
             }
         }
         arsort($sortArray);
 
         $value = preg_replace_callback(
             '/(href=|src=)([\'"])(http.*?)\2/',
-            function($matches) use ($sortArray, $siteUrlsById) {
+            function($matches) use ($sortArray, $baseUrl, $isVolume, $siteOrVolumeId) {
                 $url = $matches[3] ?? null;
 
                 if (!$url) {
@@ -285,10 +298,9 @@ abstract class HtmlField extends Field
                 }
 
                 // Longest URL first
-                foreach ($sortArray as $siteId => $bogus) {
-                    // Starts with a site URL
-
-                    if (StringHelper::startsWith($url, $siteUrlsById[$siteId])) {
+                foreach ($sortArray as $idx => $bogus) {
+                    // Must start with the base URL
+                    if (StringHelper::startsWith($url, $baseUrl[$idx])) {
                         // Drop query
                         $query = parse_url($url, PHP_URL_QUERY);
 
@@ -305,15 +317,28 @@ abstract class HtmlField extends Field
                             $uri = preg_replace("/^(?:(.*)\/)?$pageTrigger(\d+)$/", '', $uri);
                         }
 
-                        // Drop site URL.
-                        $uri = StringHelper::removeLeft($uri, $siteUrlsById[$siteId]);
+                        // Drop base URL
+                        $uri = StringHelper::removeLeft($uri, $baseUrl[$idx]);
 
-                        if ($element = Craft::$app->getElements()->getElementByUri($uri, $siteId, true)) {
-                            $refHandle = $element::refHandle();
-                            if ($refHandle) {
-                                $url = '{' . $refHandle . ':' . $element->id . '@' . $siteId . ':url||' . $url . '}';
+                        if ($isVolume[$idx]) {
+                            $volumeId = $siteOrVolumeId[$idx];
+                            $uri = StringHelper::removeLeft($uri, '/');
+                            $lastSlash = strrpos($uri, '/');
+                            $filename = $lastSlash === false ? $uri : substr($uri, $lastSlash + 1);
+                            $dirname = $lastSlash === false ? '' : substr($uri, 0, $lastSlash + 1);
+                            if ($asset = Asset::find()->volumeId($volumeId)->folderPath($dirname)->filename($filename)->one()) {
+                                $url = "{asset:{$asset->id}:url||{$url}}";
+                                break;
                             }
-                            break;
+                        } else {
+                            $siteId = $siteOrVolumeId[$idx];
+                            if ($element = Craft::$app->getElements()->getElementByUri($uri, $siteId, true)) {
+                                $refHandle = $element::refHandle();
+                                if ($refHandle) {
+                                    $url = '{' . $refHandle . ':' . $element->id . '@' . $siteId . ':url||' . $url . '}';
+                                }
+                                break;
+                            }
                         }
                     }
                 }
