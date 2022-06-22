@@ -280,8 +280,9 @@ abstract class HtmlField extends Field
         }
 
         foreach (Craft::$app->getVolumes()->getAllVolumes() as $volume) {
-            if ($volume->hasUrls) {
-                $baseUrls[] = $volume->getRootUrl();
+            $fs = $volume->getFs();
+            if ($fs->hasUrls) {
+                $baseUrls[] = $fs->getRootUrl();
                 $siteIds[] = null;
                 $volumeIds[] = $volume->id;
             }
