@@ -342,7 +342,7 @@ abstract class HtmlField extends Field
                             $assetId = Asset::find()
                                 ->volumeId($volumeIds[$key])
                                 ->filename($filename)
-                                ->andWhere(['volumeFolders.path' => $folderPath !== '.' ? $folderPath : ''])
+                                ->folderPath($folderPath !== '.' ? $folderPath : '')
                                 ->select(['elements.id'])
                                 ->scalar();
 
