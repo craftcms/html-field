@@ -11,6 +11,7 @@ namespace craft\htmlfield;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\base\Volume;
 use craft\elements\Asset;
 use craft\helpers\FileHelper;
 use craft\helpers\Html;
@@ -280,6 +281,7 @@ abstract class HtmlField extends Field
         }
 
         foreach (Craft::$app->getVolumes()->getAllVolumes() as $volume) {
+            /** @var Volume $volume */
             if ($volume->hasUrls && ($baseUrl = $volume->getRootUrl())) {
                 $baseUrls[] = $baseUrl;
                 $siteIds[] = null;
