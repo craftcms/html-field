@@ -272,16 +272,16 @@ abstract class HtmlField extends Field
         $volumeIds = [];
 
         foreach (Craft::$app->getSites()->getAllSites(false) as $site) {
-            if ($site->hasUrls) {
-                $baseUrls[] = $site->getBaseUrl();
+            if ($site->hasUrls && ($baseUrl = $site->getBaseUrl())) {
+                $baseUrls[] = $baseUrl;
                 $siteIds[] = $site->id;
                 $volumeIds[] = null;
             }
         }
 
         foreach (Craft::$app->getVolumes()->getAllVolumes() as $volume) {
-            if ($volume->hasUrls) {
-                $baseUrls[] = $volume->getRootUrl();
+            if ($volume->hasUrls && ($baseUrl = $volume->getRootUrl())) {
+                $baseUrls[] = $baseUrl;
                 $siteIds[] = null;
                 $volumeIds[] = $volume->id;
             }
