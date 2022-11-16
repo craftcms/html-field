@@ -501,7 +501,7 @@ abstract class HtmlField extends Field
     /**
      * Returns the allowed inline CSS styles, based on the plugins that are enabled.
      *
-     * @return string[]
+     * @return array<string,bool>
      */
     protected function allowedStyles(): array
     {
