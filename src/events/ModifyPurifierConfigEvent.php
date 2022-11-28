@@ -24,5 +24,7 @@ class ModifyPurifierConfigEvent extends Event
     public ?HTMLPurifier_Config $config;
 }
 
+/** @phpstan-ignore-next-line */
 class_alias(ModifyPurifierConfigEvent::class, \craft\redactor\events\ModifyPurifierConfigEvent::class);
+/** @phpstan-ignore-next-line */
 class_alias(ModifyPurifierConfigEvent::class, \craft\ckeditor\events\ModifyPurifierConfigEvent::class);
