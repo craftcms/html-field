@@ -9,10 +9,12 @@
 namespace craft\htmlfield;
 
 use Craft;
+use craft\base\CopyableFieldInterface;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\base\Volume;
 use craft\elements\Asset;
+use craft\helpers\ElementHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\Html;
 use craft\helpers\HtmlPurifier;
@@ -29,7 +31,7 @@ use yii\db\Schema;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 1.0.0
  */
-abstract class HtmlField extends Field
+abstract class HtmlField extends Field implements CopyableFieldInterface
 {
     /**
      * @var string|null The HTML Purifier config file to use
@@ -367,6 +369,14 @@ abstract class HtmlField extends Field
         }
 
         return $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIsCopyable(?ElementInterface $element = null): bool
+    {
+        return $this->getIsTranslatable($element) && ElementHelper::supportsFieldCopying($element);
     }
 
     /**
