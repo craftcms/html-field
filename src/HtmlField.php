@@ -383,10 +383,12 @@ abstract class HtmlField extends Field
             return $value;
         }
 
+        $elementsService = Craft::$app->getElements();
+
         return preg_replace_callback(
-            sprintf('/(href=|src=)([\'"])(\{([\w\\\\]+\:\d+(?:@\d+)?\:(?:transform\:)?%s)(?:\|\|[^\}]+)?\})(?:\?([^\'"#]*))?(#[^\'"#]+)?\2/', HandleValidator::$handlePattern),
-            function($matches) use ($element) {
-                [$fullMatch, $attr, $q, $refTag, $ref, $query, $fragment] = array_pad($matches, 7, null);
+            sprintf('/(href=|src=)([\'"])(\{([\w\\\\]+)(\:\d+(?:@\d+)?\:(?:transform\:)?%s)(?:\|\|[^\}]+)?\})(?:\?([^\'"#]*))?(#[^\'"#]+)?\2/', HandleValidator::$handlePattern),
+            function($matches) use ($element, $elementsService) {
+                [$fullMatch, $attr, $q, $refTag, $refHandle, $refRemainder, $query, $fragment] = array_pad($matches, 8, null);
                 $parsed = Craft::$app->getElements()->parseRefs($refTag, $element->siteId ?? null);
 
                 // If the ref tag couldn't be parsed, leave it alone
@@ -402,7 +404,17 @@ abstract class HtmlField extends Field
                     }
                 }
 
-                return sprintf('%s%s%s', "$attr$q$parsed", $fragment ?? '', "#$ref$q");
+                // Make sure the ref handle matches the real ref handle from the resolved element type
+                /** @var string|ElementInterface|null $class */
+                $class = $elementsService->getElementTypeByRefHandle($refHandle);
+                if ($class) {
+                    $realRefHandle = $class::refHandle();
+                    if ($realRefHandle) {
+                        $refHandle = $realRefHandle;
+                    }
+                }
+
+                return $attr . $q . $parsed . ($fragment ?? '') . '#' . $refHandle . $refRemainder . $q;
             },
             $value
         );
