@@ -33,6 +33,14 @@ use yii\db\Schema;
 abstract class HtmlField extends Field implements PreviewableFieldInterface
 {
     /**
+     * @inheritdoc
+     */
+    public static function valueType(): string
+    {
+        return 'string';
+    }
+
+    /**
      * @var string|null The HTML Purifier config file to use
      */
     public ?string $purifierConfig = null;
