@@ -35,7 +35,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public static function valueType(): string
+    public static function phpType(): string
     {
         return 'string';
     }
@@ -66,24 +66,19 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
     public bool $removeNbsp = false;
 
     /**
-     * @var string The type of database column the field should have in the content table
+     * Constructor
      */
-    public string $columnType = Schema::TYPE_TEXT;
-
-    /**
-     * @inheritdoc
-     */
-    public function getTableAttributeHtml(mixed $value, ElementInterface $element): string
+    public function __construct($config = [])
     {
-        return strip_tags((string)$value);
+        // remove unused settings
+        unset($config['columnType']);
+
+        parent::__construct($config);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getContentColumnType(): array|string
+    public function getPreviewHtml(mixed $value, ElementInterface $element): string
     {
-        return $this->columnType;
+        return strip_tags((string)$value);
     }
 
     /**
@@ -97,7 +92,6 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
         $attributes[] = 'removeEmptyTags';
         $attributes[] = 'removeNbsp';
         $attributes[] = 'purifyHtml';
-        $attributes[] = 'columnType';
         return $attributes;
     }
 
