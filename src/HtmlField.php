@@ -170,7 +170,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
     {
         $keywords = parent::searchKeywords($value, $element);
 
-        if (Craft::$app->getDb()->getIsMysql()) {
+        if (!Craft::$app->getDb()->getSupportsMb4()) {
             $keywords = StringHelper::encodeMb4($keywords);
         }
 
@@ -378,7 +378,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
             $value
         );
 
-        if (Craft::$app->getDb()->getIsMysql()) {
+        if (!Craft::$app->getDb()->getSupportsMb4()) {
             // Encode any 4-byte UTF-8 characters.
             $value = StringHelper::encodeMb4($value);
         }
