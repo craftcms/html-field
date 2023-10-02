@@ -22,7 +22,6 @@ use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use craft\validators\HandleValidator;
 use HTMLPurifier_Config;
-use yii\db\Schema;
 
 /**
  * Base HTML Field
