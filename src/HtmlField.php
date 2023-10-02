@@ -97,7 +97,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public function normalizeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
+    public function normalizeValue(mixed $value, ?ElementInterface $element = null): mixed
     {
         if ($value === null || $value instanceof HtmlFieldData) {
             return $value;
@@ -173,7 +173,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public function serializeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
+    public function serializeValue(mixed $value, ?ElementInterface $element): mixed
     {
         /** @var HtmlFieldData|string|null $value */
         if (!$value) {
