@@ -22,7 +22,7 @@
     "php": "^8.2"
   },
   "require-dev": {
-    "craftcms/cms": "5.0.0-alpha",
+    "craftcms/cms": "^5.0.0-alpha",
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
     "craftcms/rector": "dev-main"
