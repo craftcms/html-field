@@ -14,6 +14,7 @@ use craft\base\Field;
 use craft\base\PreviewableFieldInterface;
 use craft\base\Volume;
 use craft\elements\Asset;
+use craft\fields\conditions\EmptyFieldConditionRule;
 use craft\helpers\FileHelper;
 use craft\helpers\Html;
 use craft\helpers\HtmlPurifier;
@@ -535,5 +536,13 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
     protected function allowedStyles(): array
     {
         return [];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getElementConditionRuleType(): array|string|null
+    {
+        return EmptyFieldConditionRule::class;
     }
 }
