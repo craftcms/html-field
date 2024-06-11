@@ -18,10 +18,8 @@ use Twig\Markup;
  */
 class HtmlFieldData extends Markup
 {
-    /**
-     * @var string
-     */
-    private string $_rawContent;
+    protected string $rawContent;
+    protected ?int $siteId;
 
     /**
      * Constructor
@@ -32,7 +30,8 @@ class HtmlFieldData extends Markup
     public function __construct(string $content, ?int $siteId = null)
     {
         // Save the raw content in case we need it later
-        $this->_rawContent = $content;
+        $this->rawContent = $content;
+        $this->siteId = $siteId;
 
         // Parse the ref tags
         $content = Craft::$app->getElements()->parseRefs($content, $siteId);
@@ -47,7 +46,7 @@ class HtmlFieldData extends Markup
      */
     public function getRawContent(): string
     {
-        return $this->_rawContent;
+        return $this->rawContent;
     }
 
     /**
