@@ -29,7 +29,7 @@ class HtmlFieldData extends Markup
      * @param string $content
      * @param int|null $siteId
      */
-    public function __construct(string $content, int $siteId = null)
+    public function __construct(string $content, ?int $siteId = null)
     {
         // Save the raw content in case we need it later
         $this->_rawContent = $content;
