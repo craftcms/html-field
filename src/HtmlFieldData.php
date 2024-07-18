@@ -59,4 +59,14 @@ class HtmlFieldData extends Markup
     {
         return (string)$this;
     }
+
+    /**
+     * Returns whether the content of the field is empty or not.
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return strlen(trim($this->getParsedContent())) === 0;
+    }
 }
