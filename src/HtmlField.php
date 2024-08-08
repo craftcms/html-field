@@ -12,7 +12,6 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\base\PreviewableFieldInterface;
-use craft\base\Volume;
 use craft\elements\Asset;
 use craft\fields\conditions\EmptyFieldConditionRule;
 use craft\helpers\FileHelper;
