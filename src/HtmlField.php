@@ -12,6 +12,8 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\base\PreviewableFieldInterface;
+use craft\base\RelationalFieldInterface;
+use craft\base\RelationalFieldTrait;
 use craft\elements\Asset;
 use craft\fields\conditions\EmptyFieldConditionRule;
 use craft\helpers\FileHelper;
@@ -29,14 +31,23 @@ use HTMLPurifier_Config;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 1.0.0
  */
-abstract class HtmlField extends Field implements PreviewableFieldInterface
+abstract class HtmlField extends Field implements PreviewableFieldInterface, RelationalFieldInterface
 {
+    use RelationalFieldTrait;
+
+    private static string $refUrlPattern;
+
     /**
      * @inheritdoc
      */
     public static function phpType(): string
     {
         return 'string';
+    }
+
+    private static function refUrlPattern(): string
+    {
+        return self::$refUrlPattern ??= sprintf('/(href=|src=)([\'"])([^\'"\?#]*)(\?[^\'"\?#]+)?(#[^\'"\?#]+)?(?:#|%%23)([\w\\\\]+)\:(\d+)(?:@(\d+))?(\:(?:transform\:)?%s)?\2/', HandleValidator::$handlePattern);
     }
 
     /**
@@ -243,7 +254,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
 
         // Find any element URLs and swap them with ref tags
         $value = preg_replace_callback(
-            sprintf('/(href=|src=)([\'"])([^\'"\?#]*)(\?[^\'"\?#]+)?(#[^\'"\?#]+)?(?:#|%%23)([\w\\\\]+)\:(\d+)(?:@(\d+))?(\:(?:transform\:)?%s)?\2/', HandleValidator::$handlePattern),
+            self::refUrlPattern(),
             function($matches) {
                 [, $attr, $q, $url, $query, $hash, $elementType, $ref, $siteId, $transform] = array_pad($matches, 10, null);
 
@@ -428,6 +439,22 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
             },
             $value
         );
+    }
+
+    /**
+     * @see RelationalFieldInterface::getRelationTargetIds()
+     */
+    public function getRelationTargetIds(ElementInterface $element): array
+    {
+        /** @var HtmlFieldData|null $value */
+        $value = $element->getFieldValue($this->handle);
+
+        if (!$value) {
+            return [];
+        }
+
+        preg_match_all(self::refUrlPattern(), $value->getRawContent(), $matches);
+        return array_map(fn(string $id) => (int)$id, $matches[7] ?? []);
     }
 
     /**
