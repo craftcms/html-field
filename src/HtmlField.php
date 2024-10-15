@@ -310,11 +310,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
         $value = preg_replace_callback(
             '/(href=|src=)([\'"])((?:\/|http).*?)\2/',
             function($matches) use ($baseUrls, $siteIds, $volumeIds) {
-                $url = $matches[3] ?? null;
-
-                if (!$url) {
-                    return '';
-                }
+                $url = $matches[3];
 
                 foreach ($baseUrls as $key => $baseUrl) {
                     if (StringHelper::startsWith($url, $baseUrl)) {
