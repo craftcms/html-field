@@ -38,7 +38,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
      */
     public static function valueType(): string
     {
-        return 'string';
+        return sprintf('%s|null', HtmlFieldData::class);
     }
 
     /**
