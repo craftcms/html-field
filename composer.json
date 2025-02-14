@@ -20,7 +20,8 @@
   "prefer-stable": true,
   "require": {
     "php": "^8.2",
-    "craftcms/cms": "^5.0.0-beta.1"
+    "craftcms/cms": "^5.0.0-beta.1",
+    "league/html-to-markdown": "^5.1"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
