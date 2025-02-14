@@ -8,6 +8,7 @@
 namespace craft\htmlfield;
 
 use Craft;
+use League\HTMLToMarkdown\HtmlConverter;
 use Twig\Markup;
 
 /**
@@ -58,5 +59,42 @@ class HtmlFieldData extends Markup
     public function getParsedContent(): string
     {
         return (string)$this;
+    }
+
+    /**
+     * Returns the content as Markdown.
+     *
+     * @param array $config HtmlConverter configuration
+     * @return string
+     * @since 2.2.0
+     */
+    public function getMarkdown(array $config = []): string
+    {
+        $converter = new HtmlConverter([
+            'header_style' => 'atx',
+            'remove_nodes' => 'meta style script',
+            ...$config,
+        ]);
+        return $converter->convert($this->getParsedContent());
+    }
+
+    /**
+     * Returns the content as Markdown.
+     *
+     * @return string
+     * @since 2.2.0
+     */
+    public function getPlainText(): string
+    {
+        $text = $this->getMarkdown([
+            'strip_tags' => true,
+            'strip_placeholder_links' => true,
+            'hard_break' => true,
+        ]);
+
+        // remove heading chars
+        $text = preg_replace('/^#* /m', '', $text);
+
+        return $text;
     }
 }
