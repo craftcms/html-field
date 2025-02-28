@@ -405,9 +405,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
                 if ($query) {
                     // Decode any HTML entities, e.g. &amp;
                     $query = Html::decode($query);
-                    if (mb_strpos($parsed, $query) !== false) {
-                        $parsed = UrlHelper::urlWithParams($parsed, $query);
-                    }
+                    $parsed = UrlHelper::urlWithParams($parsed, $query);
                 }
 
                 // Make sure the ref handle matches the real ref handle from the resolved element type
