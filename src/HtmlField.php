@@ -22,6 +22,7 @@ use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use craft\validators\HandleValidator;
 use HTMLPurifier_Config;
+use League\Uri\Uri;
 
 /**
  * Base HTML Field
@@ -258,14 +259,44 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
                     if ($query) {
                         // Decode any HTML entities, e.g. &amp;
                         $query = Html::decode($query);
-                        if (mb_strpos($parsed, $query) !== false) {
-                            $url .= $query;
+                        // split the query into parts
+                        $queryParts = explode('&', $query);
+                        foreach ($queryParts as $key => $queryPart) {
+                            // if the $queryPart is a part of the parsed url, update the URL
+                            // otherwise, we'll add it after the ref ({} portion of the URL)
+                            if (mb_strpos($parsed, $queryPart) !== false) {
+                                $url = UrlHelper::urlWithParams($url, $queryPart);
+                                unset($queryParts[$key]);
+                            }
+                        }
+                        $queryParts = array_values($queryParts);
+                        if (empty($queryParts)) {
                             $query = '';
+                        } else {
+                            $query = '?' . implode('&', $queryParts);
                         }
                     }
-                    if ($hash && mb_strpos($parsed, $hash) !== false) {
-                        $url .= $hash;
-                        $hash = '';
+
+                    // if we have a $hash
+                    if ($hash) {
+                        // and there's a hash in the $parsed URL, and they match - add $hash to the $url and empty $hash
+                        if (mb_strpos($parsed, $hash) !== false) {
+                            $url .= $hash;
+                            $hash = '';
+                        } else if (mb_strpos($parsed, '#') !== false) {
+                            // if the $parsed URL has a hash, use it and discard the "new" hash
+                            try {
+                                $uri = Uri::new($parsed);
+                                $hash = $uri->getFragment();
+                                if ($hash) {
+                                    $url .= '#' . $hash;
+                                }
+                            } catch (\Exception $e) {
+                                // oh, well
+                            }
+                            $hash = '';
+                        }
+                        // otherwise, use that new hash
                     }
                 }
 
@@ -405,6 +436,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
                 if ($query) {
                     // Decode any HTML entities, e.g. &amp;
                     $query = Html::decode($query);
+                    // we want to keep the whole query, regardless of whether it's part of the element's URI format or not
                     $parsed = UrlHelper::urlWithParams($parsed, $query);
                 }
 
