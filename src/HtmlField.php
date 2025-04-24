@@ -283,7 +283,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
                         if (mb_strpos($parsed, $hash) !== false) {
                             $url .= $hash;
                             $hash = '';
-                        } else if (mb_strpos($parsed, '#') !== false) {
+                        } elseif (mb_strpos($parsed, '#') !== false) {
                             // if the $parsed URL has a hash, use it and discard the "new" hash
                             try {
                                 $uri = Uri::new($parsed);
