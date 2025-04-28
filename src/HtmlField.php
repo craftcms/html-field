@@ -260,7 +260,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
                         // Decode any HTML entities, e.g. &amp;
                         $query = Html::decode($query);
                         // split the query into parts
-                        $queryParts = explode('&', $query);
+                        $queryParts = explode('&', ltrim($query, '?'));
                         foreach ($queryParts as $key => $queryPart) {
                             // if the $queryPart is a part of the parsed url, update the URL
                             // otherwise, we'll add it after the ref ({} portion of the URL)
