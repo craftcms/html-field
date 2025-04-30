@@ -21,7 +21,9 @@
   "require": {
     "php": "^8.2",
     "craftcms/cms": "^5.5.0",
-    "league/html-to-markdown": "^5.1"
+    "league/html-to-markdown": "^5.1",
+    "symfony/css-selector": "^6.0|^7.0",
+    "symfony/dom-crawler": "^6.0|^7.0"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
