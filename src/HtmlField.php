@@ -357,7 +357,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
                             $assetId = Asset::find()
                                 ->volumeId($volumeIds[$key])
                                 ->filename($filename)
-                                ->folderPath($folderPath !== '.' ? $folderPath : '')
+                                ->folderPath($folderPath !== '.' ? StringHelper::ensureRight($folderPath, '/') : '')
                                 ->select(['elements.id'])
                                 ->scalar();
 
