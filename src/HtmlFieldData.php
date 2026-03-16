@@ -121,7 +121,7 @@ class HtmlFieldData extends Markup
             'hard_break' => true,
         ]);
 
-        return $converter->convert($body->html());
+        return html_entity_decode($converter->convert($body->html()));
     }
 
     protected string $rawContent;
