@@ -496,21 +496,30 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
      * @param string $dir The directory name within the config/ folder to look for config files
      * @return array
      */
-    protected function configOptions(string $dir): array
-    {
-        $options = ['' => Craft::t('app', 'Default')];
+    protected function configOptions(
+        string $dir,
+        array $only = ['*.json'],
+        bool $includeDefault = true,
+        bool $includeExtensions = false,
+    ): array {
+        $options = [];
+
+        if ($includeDefault) {
+            $options[''] = Craft::t('app', 'Default');
+        }
+
         $path = Craft::$app->getPath()->getConfigPath() . DIRECTORY_SEPARATOR . $dir;
 
         if (is_dir($path)) {
             $files = FileHelper::findFiles($path, [
-                'only' => ['*.json'],
+                'only' => $only,
                 'recursive' => false,
             ]);
 
             foreach ($files as $file) {
                 $filename = basename($file);
                 if ($filename !== 'Default.json') {
-                    $options[$filename] = pathinfo($file, PATHINFO_FILENAME);
+                    $options[$filename] = $includeExtensions ? $filename : pathinfo($file, PATHINFO_BASENAME);
                 }
             }
         }
