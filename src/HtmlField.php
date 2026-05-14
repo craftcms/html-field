@@ -435,8 +435,26 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
 
         $elementsService = Craft::$app->getElements();
 
+        // Parse alt attribute asset ref tags: {asset:123:alt||fallback text}
+        $value = preg_replace_callback(
+            '/(alt=)([\'"])(\{asset:(\d+(?:@\d+)?):alt(?:\|\|[^\}]+)?\})\2/',
+            function($matches) use ($element) {
+                [$fullMatch, $attr, $q, $refTag, $ref] = $matches;
+                $parsed = Craft::$app->getElements()->parseRefs($refTag, $element->siteId ?? null);
+
+                // If the ref tag couldn't be resolved, leave it alone
+                if ($parsed === $refTag) {
+                    return $fullMatch;
+                }
+
+                // Output: alt="[resolved text]#asset:123:alt"
+                return $attr . $q . $parsed . '#asset:' . $ref . ':alt' . $q;
+            },
+            $value
+        );
+
         return preg_replace_callback(
-            sprintf('/(href=|src=|alt=)([\'"])(\{([\w\\\\]+)(\:\d+(?:@\d+)?\:(?:transform\:)?%s)(?:\|\|[^\}]+)?\})(?:\?([^\'"#]*))?(#[^\'"#]+)?\2/', HandleValidator::$handlePattern),
+            sprintf('/(href=|src=)([\'"])(\{([\w\\\\]+)(\:\d+(?:@\d+)?\:(?:transform\:)?%s)(?:\|\|[^\}]+)?\})(?:\?([^\'"#]*))?(#[^\'"#]+)?\2/', HandleValidator::$handlePattern),
             function($matches) use ($element, $elementsService) {
                 [$fullMatch, $attr, $q, $refTag, $refHandle, $refRemainder, $query, $fragment] = array_pad($matches, 8, null);
                 $parsed = Craft::$app->getElements()->parseRefs($refTag, $element->siteId ?? null);
