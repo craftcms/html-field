@@ -242,6 +242,19 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
             $value = preg_replace('/  +/', ' ', $value);
         }
 
+        // Find any alt text element refs and swap them with ref tags
+        $value = preg_replace_callback(
+            '/(alt=)([\'"])([^\'"]*)(?:#|%%23)asset:(\d+)(?:@(\d+))?:alt\2/',
+            function($matches) {
+                [, $attr, $q, $text, $ref, $siteId] = array_pad($matches, 6, null);
+
+                $ref = "asset:$ref" . ($siteId ? "@$siteId" : '') . ':alt';
+
+                return sprintf('%s%s%s', "$attr$q{", "$ref||$text", "}$q");
+            },
+            $value
+        );
+
         // Find any element URLs and swap them with ref tags
         $value = preg_replace_callback(
             sprintf('/(href=|src=)([\'"])([^\'"\?#]*)(\?[^\'"\?#]+)?(#[^\'"\?#]+)?(?:#|%%23)([\w\\\\]+)\:(\d+)(?:@(\d+))?(\:(?:transform\:)?%s)?\2/', HandleValidator::$handlePattern),
@@ -423,7 +436,7 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
         $elementsService = Craft::$app->getElements();
 
         return preg_replace_callback(
-            sprintf('/(href=|src=)([\'"])(\{([\w\\\\]+)(\:\d+(?:@\d+)?\:(?:transform\:)?%s)(?:\|\|[^\}]+)?\})(?:\?([^\'"#]*))?(#[^\'"#]+)?\2/', HandleValidator::$handlePattern),
+            sprintf('/(href=|src=|alt=)([\'"])(\{([\w\\\\]+)(\:\d+(?:@\d+)?\:(?:transform\:)?%s)(?:\|\|[^\}]+)?\})(?:\?([^\'"#]*))?(#[^\'"#]+)?\2/', HandleValidator::$handlePattern),
             function($matches) use ($element, $elementsService) {
                 [$fullMatch, $attr, $q, $refTag, $refHandle, $refRemainder, $query, $fragment] = array_pad($matches, 8, null);
                 $parsed = Craft::$app->getElements()->parseRefs($refTag, $element->siteId ?? null);
