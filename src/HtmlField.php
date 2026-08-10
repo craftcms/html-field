@@ -248,9 +248,9 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
             function($matches) {
                 [, $attr, $q, $text, $ref, $siteId] = array_pad($matches, 6, null);
 
-                $ref = "asset:$ref" . ($siteId ? "@$siteId" : '') . ':alt';
+                $ref = sprintf('asset:%s%s:alt', $ref, $siteId ? "@$siteId" : '');
 
-                return sprintf('%s%s%s', "$attr$q{", "$ref||$text", "}$q");
+                return sprintf('%s%s{%s%s}%s', $attr, $q, $ref, $text ? "||$text" : '', $q);
             },
             $value
         );
