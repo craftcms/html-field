@@ -549,10 +549,15 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
 
             foreach ($files as $file) {
                 $filename = basename($file);
-                if ($filename !== 'Default.json') {
-                    $options[$filename] = $includeExtensions ? $filename : pathinfo($file, PATHINFO_BASENAME);
-                }
+                $options[$filename] = $includeExtensions ? $filename : pathinfo($file, PATHINFO_BASENAME);
             }
+        }
+
+        // if we're including the default,
+        // and we found a file named Default.json (which can only happen if *.json is allowed by the $only option)
+        // remove that file from the $options list as it's expected to be handled by the $includeDefault option
+        if ($includeDefault && isset($options['Default.json'])) {
+            unset($options['Default.json']);
         }
 
         ksort($options);
