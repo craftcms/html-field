@@ -549,9 +549,12 @@ abstract class HtmlField extends Field implements PreviewableFieldInterface
 
             foreach ($files as $file) {
                 $filename = basename($file);
-                if ($filename !== 'Default.json') {
-                    $options[$filename] = $includeExtensions ? $filename : pathinfo($file, PATHINFO_BASENAME);
+                // Exclude `default` files if $includeDefault is true, to prevent confusion between e.g. "Default" and "Default.json"
+                if ($includeDefault && strtolower(pathinfo($filename, PATHINFO_FILENAME)) === 'default') {
+                    continue;
                 }
+
+                $options[$filename] = $includeExtensions ? $filename : pathinfo($file, PATHINFO_BASENAME);
             }
         }
 
