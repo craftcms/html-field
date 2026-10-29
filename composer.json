@@ -19,30 +19,32 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^8.2",
-    "craftcms/cms": "^5.5.0",
+    "php": "^8.5",
+    "craftcms/cms": "^6.0.0-alpha.20",
     "league/html-to-markdown": "^5.1",
-    "symfony/css-selector": "^6.0|^7.0",
-    "symfony/dom-crawler": "^6.0|^7.0"
+    "league/uri": "^7.0",
+    "symfony/css-selector": "^7.0|^8.0",
+    "symfony/dom-crawler": "^7.0|^8.0",
+    "symfony/html-sanitizer": "^7.0|^8.0"
   },
   "require-dev": {
-    "craftcms/ecs": "dev-main",
-    "craftcms/phpstan": "dev-main",
-    "craftcms/rector": "dev-main"
+    "craftcms/rector": "dev-craft6",
+    "phpstan/phpstan": "^2.1",
+    "laravel/pint": "^1.22"
   },
   "autoload": {
     "psr-4": {
-      "craft\\htmlfield\\": "src/"
+      "CraftCms\\HtmlField\\": "src/"
     }
   },
   "scripts": {
-    "check-cs": "ecs check --ansi",
-    "fix-cs": "ecs check --ansi --fix",
+    "check-cs": "pint --test",
+    "fix-cs": "pint",
     "phpstan": "phpstan --memory-limit=1G"
   },
   "config": {
     "platform": {
-      "php": "8.2"
+      "php": "8.5"
     },
     "allow-plugins": {
       "yiisoft/yii2-composer": true,
