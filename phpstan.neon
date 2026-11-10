@@ -1,7 +1,14 @@
-includes:
-    - vendor/craftcms/phpstan/phpstan.neon
-
 parameters:
+    phpVersion: 80500
     level: 4
     paths:
         - src
+    ignoreErrors:
+        # Craft registers supportsMb4() as a database connection macro
+        -
+            message: '#DB::supportsMb4\(\)#'
+            identifier: staticMethod.notFound
+        # Craft 6 still checks `instanceof Markup` for HTML-safe values (e.g. in the Twig sandbox security policy)
+        -
+            identifier: class.extendsFinalByPhpDoc
+            path: src/HtmlFieldData.php

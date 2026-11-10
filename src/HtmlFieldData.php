@@ -1,26 +1,30 @@
 <?php
+
 /**
  * @link https://craftcms.com/
+ *
  * @copyright Copyright (c) Pixel & Tonic, Inc.
  * @license MIT
  */
 
-namespace craft\htmlfield;
+namespace CraftCms\HtmlField;
 
-use Craft;
+use CraftCms\Cms\Support\Facades\Elements;
 use DOMElement;
+use Illuminate\Contracts\Support\Htmlable;
 use League\HTMLToMarkdown\HtmlConverter;
+use LogicException;
 use Symfony\Component\DomCrawler\Crawler;
 use Twig\Markup;
-use yii\base\UnknownPropertyException;
 
 /**
  * Stores the HTML field data.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
  * @since 1.0.0
  */
-class HtmlFieldData extends Markup
+class HtmlFieldData extends Markup implements Htmlable
 {
     public const BASE_MARKDOWN_CONFIG = [
         'header_style' => 'atx',
@@ -30,9 +34,8 @@ class HtmlFieldData extends Markup
     /**
      * Converts the given HTML into Markdown.
      *
-     * @param string $html
-     * @param array $config (see HtmlConverter::__construct() for options)
-     * @return string
+     * @param  array  $config  (see HtmlConverter::__construct() for options)
+     *
      * @since 3.4.0
      */
     public static function toMarkdown(string $html, array $config = []): string
@@ -77,8 +80,6 @@ class HtmlFieldData extends Markup
     /**
      * Converts the given HTLM into plain text.
      *
-     * @param string $html
-     * @return string
      * @since 3.4.0
      */
     public static function toPlainText(string $html): string
@@ -125,13 +126,11 @@ class HtmlFieldData extends Markup
     }
 
     protected string $rawContent;
+
     protected ?int $siteId;
 
     /**
      * Constructor
-     *
-     * @param string $content
-     * @param int|null $siteId
      */
     public function __construct(string $content, ?int $siteId = null)
     {
@@ -140,9 +139,9 @@ class HtmlFieldData extends Markup
         $this->siteId = $siteId;
 
         // Parse the ref tags
-        $content = Craft::$app->getElements()->parseRefs($content, $siteId);
+        $content = Elements::parseRefs($content, $siteId);
 
-        parent::__construct($content, Craft::$app->charset);
+        parent::__construct($content, 'UTF-8');
     }
 
     public function __get(string $name)
@@ -152,14 +151,12 @@ class HtmlFieldData extends Markup
             'parsedContent' => $this->getParsedContent(),
             'markdown' => $this->getMarkdown(),
             'plainText' => $this->getPlainText(),
-            default => throw new UnknownPropertyException(sprintf('Getting unknown property: %s::%s', static::class, $name)),
+            default => throw new LogicException(sprintf('Getting unknown property: %s::%s', static::class, $name)),
         };
     }
 
     /**
      * Returns the raw content, with reference tags still in-tact.
-     *
-     * @return string
      */
     public function getRawContent(): string
     {
@@ -168,19 +165,27 @@ class HtmlFieldData extends Markup
 
     /**
      * Returns the parsed content, with reference tags returned as HTML links.
-     *
-     * @return string
      */
     public function getParsedContent(): string
     {
-        return (string)$this;
+        return (string) $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since 4.0.0
+     */
+    public function toHtml(): string
+    {
+        return $this->getParsedContent();
     }
 
     /**
      * Returns the content as Markdown.
      *
-     * @param array $config HtmlConverter configuration
-     * @return string
+     * @param  array  $config  HtmlConverter configuration
+     *
      * @since 3.2.0
      */
     public function getMarkdown(array $config = []): string
@@ -191,7 +196,6 @@ class HtmlFieldData extends Markup
     /**
      * Returns the content as Markdown.
      *
-     * @return string
      * @since 3.2.0
      */
     public function getPlainText(): string
